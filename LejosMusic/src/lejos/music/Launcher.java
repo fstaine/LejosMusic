@@ -14,10 +14,10 @@ public class Launcher {
 		
 		final TrackReader trackReader = new TrackReader();
 		
-		final Track violin1 = trackReader.read(Launcher.class.getResourceAsStream("/lejos/music/samples/violin1.txt"));
-		final Track violin2 = trackReader.read(Launcher.class.getResourceAsStream("/lejos/music/samples/violin2.txt"));
-		final Track violoncello = trackReader.read(Launcher.class.getResourceAsStream("/lejos/music/samples/violoncello.txt"));
-		final Track contrabass = trackReader.read(Launcher.class.getResourceAsStream("/lejos/music/samples/contrabass.txt"));
+		final Track violin1 = trackReader.read(Launcher.class.getResourceAsStream("/lejos/music/samples/score01/violin1.txt"));
+		final Track violin2 = trackReader.read(Launcher.class.getResourceAsStream("/lejos/music/samples/score01/violin2.txt"));
+		final Track violoncello = trackReader.read(Launcher.class.getResourceAsStream("/lejos/music/samples/score01/violoncello.txt"));
+		final Track contrabass = trackReader.read(Launcher.class.getResourceAsStream("/lejos/music/samples/score01/contrabass.txt"));
 	
 		violin1.setBpm(90);
 		violin2.setBpm(90);
