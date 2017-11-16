@@ -1,12 +1,18 @@
 package lejos.music;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lejos.hardware.Sound;
+import lejos.hardware.lcd.LCD;
+import lejos.network.BroadcastListener;
 
-public class Track {
+public class Track implements BroadcastListener {
 	private List<Note> notes = new ArrayList<>();
 	
 	private int bpm = 60;
@@ -130,5 +136,28 @@ public class Track {
 	public void reset() {
 		this.position = 0;
 		this.time = 0;
+	}
+	
+	@Override
+	public void onBroadcastReceived(Collection<Float> clocks) {
+		// Version centralisée : OK
+//		for (float clock : clocks) {
+//			if (Math.abs(getTime() - clock) > Launcher.Dt) {
+//				System.out.println("Prev time: " + getTime());
+//				setTime(time);
+//				System.out.println("New time: " + getTime());
+//			}
+//		}
+		// Version décentralisée
+		float mean = 0;
+		for (Float f : clocks) {
+			mean += f;
+		}
+		mean /= clocks.size();
+		if (Math.abs(getTime() - mean) > Launcher.Dt) {
+			System.out.println("Prev time: " + getTime());
+			setTime(time);
+			System.out.println("New time: " + getTime());
+		}
 	}
 }

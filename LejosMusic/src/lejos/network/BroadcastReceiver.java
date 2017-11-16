@@ -3,9 +3,13 @@ package lejos.network;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Singleton class used to receive the broadcast
@@ -15,6 +19,8 @@ import java.util.List;
 public class BroadcastReceiver implements AutoCloseable {
 	
 	private static BroadcastReceiver instance = null;
+	
+	private static Map<InetAddress, Float> clocks = new HashMap<>();
 	
 	/**
 	 * Gets an instance of the broadcast receiver 
@@ -69,9 +75,9 @@ public class BroadcastReceiver implements AutoCloseable {
 	 * Fire the broadcast received event
 	 * @param message the raw message received
 	 */
-	protected void fireBroadcastReceived(byte[] message) {
+	protected void fireBroadcastReceived() {
 		for(BroadcastListener listener : this.listeners) {
-			listener.onBroadcastReceived(message);
+			listener.onBroadcastReceived(this.clocks.values());
 		}
 	}
 	
@@ -100,7 +106,8 @@ public class BroadcastReceiver implements AutoCloseable {
 				final DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 				try {
 					this.broadcastReceiver.getSocket().receive(packet);
-					this.broadcastReceiver.fireBroadcastReceived(packet.getData());
+					clocks.put(packet.getAddress(), getTime(packet.getData()));
+					this.broadcastReceiver.fireBroadcastReceived();
 				} catch (IOException e) {
 					//
 				}
@@ -110,5 +117,9 @@ public class BroadcastReceiver implements AutoCloseable {
 		public void stop() {
 			this.stop = true;
 		}
+	}
+	
+	private static Float getTime(byte[] data) {
+		return ByteBuffer.wrap(data).getFloat();
 	}
 }
